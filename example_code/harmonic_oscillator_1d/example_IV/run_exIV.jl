@@ -19,7 +19,7 @@ using Logging, LoggingExtras
 # with the HO-length set to unity.
 # (this is assumed for all pre-computed coefficients)
 include("../sp_basis_ho1d.jl")
-const ho_orbital = HOOrbital1D(1.0)
+const ho_orbital = HOOrbital1D(1.0, 1.0)
 
 
 # Set the parameters here.
@@ -40,7 +40,7 @@ datafile = param["output_directory"]*"/exIV_data.csv"
 
 
 # Make the simple basis-cutoff Hilbert space.
-hilbert_space = FermiFCI.get_plain_fock_basis(param["n_basis"], param["n_part"])
+mb_basis = FermiFCI.get_plain_fock_basis(param["n_basis"], param["n_part"])
 
 
 # Make the single-body coefficients (same for both species).
@@ -67,9 +67,9 @@ for coupling in param["coupling_list"]
     v_ijkl = coupling != 0.0 ? construct_v_tensor(HOOrbital1D, param["n_basis"], alpha_coeffs, w_matrix) : nothing
 
     # Actually construct the elements of the Hamiltonian.
-    @info "Setting up Hamiltonian." n_fock=length(hilbert_space)
+    @info "Setting up Hamiltonian." n_fock=length(mb_basis)
     mem = @allocated time = @elapsed hamiltonian = construct_hamiltonian(
-        hilbert_space,
+        mb_basis,
         up_coeffs=c_ij,
         down_coeffs=c_ij,
         up_down_coeffs=v_ijkl
@@ -81,7 +81,7 @@ for coupling in param["coupling_list"]
     # Diagonalization and storage of spectrum.
     ev, est = diagonalize(hamiltonian, param)
     for k=1:param["n_eigenvalues"]
-        push!(results, Dict{Any,Any}("n_basis"=> param["n_basis"], "energy"=>ev[k], "N"=>k, "n_fock"=>length(hilbert_space), "coupling"=>coupling))
+        push!(results, Dict{Any,Any}("n_basis"=> param["n_basis"], "energy"=>ev[k], "N"=>k, "n_fock"=>length(mb_basis), "coupling"=>coupling))
     end
     CSV.write(datafile, results) # Export data incrementally.
 

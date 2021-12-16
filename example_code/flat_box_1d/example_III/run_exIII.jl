@@ -56,7 +56,7 @@ time = @elapsed v_ijkl = construct_v_tensor(box_orbital_up, box_orbital_down, pa
 
 
 # Make the simple basis-cutoff Hilbert space.
-hilbert_space = FermiFCI.get_plain_fock_basis(param["n_basis"], param["n_part"])
+mb_basis = FermiFCI.get_plain_fock_basis(param["n_basis"], param["n_part"])
 
 
 # ------------
@@ -65,9 +65,9 @@ results = DataFrame("n_basis"=>[], "N"=>[], "energy"=>[], "n_fock"=>[], "couplin
 for coupling in param["coupling_list"]
 
     # Actually construct the Hamiltonian.
-    @info "Setting up Hamiltonian." n_fock=length(hilbert_space)
+    @info "Setting up Hamiltonian." n_fock=length(mb_basis)
     local mem = @allocated local time = @elapsed hamiltonian = construct_hamiltonian(
-        hilbert_space,
+        mb_basis,
         up_coeffs=cij_up,
         down_coeffs=cij_down,
         up_down_coeffs=v_ijkl*coupling # Don't forget the coupling.
@@ -79,7 +79,7 @@ for coupling in param["coupling_list"]
     # Diagonalization and storage of spectrum.
     ev, est = diagonalize(hamiltonian, param)
     for k=1:param["n_eigenvalues"]
-        push!(results, Dict{Any,Any}("n_basis"=>param["n_basis"], "energy"=>ev[k], "N"=>k, "n_fock"=>length(hilbert_space), "coupling"=>coupling))
+        push!(results, Dict{Any,Any}("n_basis"=>param["n_basis"], "energy"=>ev[k], "N"=>k, "n_fock"=>length(mb_basis), "coupling"=>coupling))
     end
 
 
@@ -89,7 +89,7 @@ for coupling in param["coupling_list"]
         local orb = flavor==1 ? box_orbital_up : box_orbital_down
 
         # First step: one-body density-matrix computed from the GS wavefunction.
-        obdm = FermiFCI.compute_obdm(est[:,1], flavor, hilbert_space)
+        obdm = FermiFCI.compute_obdm(est[:,1], flavor, mb_basis)
         # Now we fix the grid and get the spatial profile.
         x_grid = collect(-orb.L:0.01:orb.L)
         time = @elapsed density_profile = FermiFCI.compute_density_profile(orb, x_grid, obdm)

@@ -38,7 +38,7 @@ include("../sp_basis_ho1d.jl")
 
 # Create an orbital with the HO-length set to unity.
 # (this is assumed for all pre-computed coefficients used here)
-const ho_orbital = HOOrbital1D(1.0)
+const ho_orbital = HOOrbital1D(1.0, 1.0)
 
 # Make the single-body coefficients (same for both species).
 c_ij = Matrix(Diagonal([ho_orbital(n) for n=1:param["n_basis"]]))
@@ -51,7 +51,7 @@ alpha_coeffs = read_alpha_coeffs(param["coeff_file"])
 
 
 # Make the simple basis-cutoff Hilbert space.
-hilbert_space = FermiFCI.get_plain_fock_basis(param["n_basis"], param["n_part"])
+mb_basis = FermiFCI.get_plain_fock_basis(param["n_basis"], param["n_part"])
 
 
 # Computation for multiple values of the basis cutoff.
@@ -70,9 +70,9 @@ for coupling in param["coupling_list"]
 
 
     # Actually construct the elements of the Hamiltonian.
-    @info "Setting up Hamiltonian." n_fock=length(hilbert_space)
+    @info "Setting up Hamiltonian." n_fock=length(mb_basis)
     mem = @allocated time = @elapsed hamiltonian = construct_hamiltonian(
-        hilbert_space,
+        mb_basis,
         up_coeffs=c_ij,
         down_coeffs=c_ij,
         up_down_coeffs=v_ijkl
@@ -83,7 +83,7 @@ for coupling in param["coupling_list"]
     # Diagonalization and storage of spectrum.
     ev, est = diagonalize(hamiltonian, param)
     for k=1:param["n_eigenvalues"]
-        push!(results, Dict{Any,Any}("n_basis"=>param["n_basis"], "energy"=>ev[k], "N"=>k, "n_fock"=>length(hilbert_space), "coupling"=>coupling))
+        push!(results, Dict{Any,Any}("n_basis"=>param["n_basis"], "energy"=>ev[k], "N"=>k, "n_fock"=>length(mb_basis), "coupling"=>coupling))
     end
     CSV.write(datafile, results);
 

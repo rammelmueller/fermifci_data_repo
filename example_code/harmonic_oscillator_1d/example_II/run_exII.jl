@@ -19,7 +19,7 @@ using Logging, LoggingExtras
 # with the HO-length set to unity.
 # (this is assumed for all pre-computed coefficients)
 include("../sp_basis_ho1d.jl")
-const ho_orbital = HOOrbital1D(1.0)
+const ho_orbital = HOOrbital1D(1.0, 1.0)
 
 
 # Set the parameters here.
@@ -65,12 +65,12 @@ for n_basis in param["n_basis_list"]
     v_ijkl = construct_v_tensor(HOOrbital1D, n_basis, alpha_coeffs, w_matrix)
 
     # Produce the Hilbert space with energy restriction..
-    hilbert_space = get_energy_restricted_fock_basis(ho_orbital, n_basis, param["n_part"])
+    mb_basis = get_energy_restricted_fock_basis(ho_orbital, n_basis, param["n_part"])
 
     # Actually construct the elements of the Hamiltonian.
-    @info "Setting up Hamiltonian." n_fock=length(hilbert_space)
+    @info "Setting up Hamiltonian." n_fock=length(mb_basis)
     mem = @allocated time = @elapsed hamiltonian = construct_hamiltonian(
-        hilbert_space,
+        mb_basis,
         up_coeffs=c_ij,
         down_coeffs=c_ij,
         up_down_coeffs=v_ijkl
@@ -82,7 +82,7 @@ for n_basis in param["n_basis_list"]
     # Diagonalization and storage of spectrum.
     ev, est = diagonalize(hamiltonian, param)
     for k=1:param["n_eigenvalues"]
-        push!(results, Dict{Any,Any}("n_basis"=>n_basis, "energy"=>ev[k], "N"=>k, "n_fock"=>length(hilbert_space), "coupling"=>param["coupling"]))
+        push!(results, Dict{Any,Any}("n_basis"=>n_basis, "energy"=>ev[k], "N"=>k, "n_fock"=>length(mb_basis), "coupling"=>param["coupling"]))
     end
     CSV.write(datafile, results) # Export data incrementally.
 
@@ -91,7 +91,7 @@ for n_basis in param["n_basis_list"]
     # Compute the ground-state density-profile for both species.
     for flavor=1:2
         # First step: one-body density-matrix computed from the GS wavefunction.
-        obdm = FermiFCI.compute_obdm(est[:,1], flavor, hilbert_space)
+        obdm = FermiFCI.compute_obdm(est[:,1], flavor, mb_basis)
         # Now we fix the grid and get the spatial profile.
         x_grid = collect(-3.5:0.01:3.5)
         time = @elapsed density_profile = FermiFCI.compute_density_profile(ho_orbital, x_grid, obdm)
