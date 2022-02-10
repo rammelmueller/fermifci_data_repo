@@ -1,5 +1,5 @@
 # fermifci_data_repo
-This repository holds source code and data for examples published in [this paper]() using the [`FermiFCI.jl`](https://github.com/rammelmueller/FermiFCI.jl) package.
+This repository holds source code and data for examples published in [this paper](https://arxiv.org/abs/2202.04603) using the [`FermiFCI.jl`](https://github.com/rammelmueller/FermiFCI.jl) package.
 
 
 ## Included examples
@@ -10,7 +10,7 @@ There are several examples included to pitch the idea on how the `FermiFCI.jl` p
 - Example III: Few fermions in 1D flat box with mass imbalance.
 - Example IV: Effective interaction for 1D harmonically trapped fermions.
 
-A more complete discussion of the examples and the associated phyiscs / ideas can be found [here]().
+A more complete discussion of the examples and the associated phyiscs / ideas can be found [here](https://arxiv.org/abs/2202.04603).
 
 
 ## Example code
@@ -37,5 +37,5 @@ For full visibility, the data used in [1] along with some plot scripts to explor
 
 
 ## Legal
-Published under the MIT Licencse. If you use this for any publication, please cite us. Have fun!
+Published under the MIT Licencse. If you use this for any publication, please [cite us](https://arxiv.org/abs/2202.04603). Have fun!
 
