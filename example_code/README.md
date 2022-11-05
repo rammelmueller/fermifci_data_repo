@@ -9,6 +9,7 @@ Once this is done, exit the Pkg REPL - this is it, everything is set up. To actu
 
 The same procedure works for all example codes provided here. To change the physical, numerical and I/O parameters simply open the run script of the respective example and modify the dictionary that holds all the parameters (typically called `param`). This is where all the user input is collected so that everything is defined in one place. Note that the nature of the implementation of these examples is simply a design choice and not at all a part of FermiFCI itself. However, it may serve as a guideline in order to maintain a readable codebase.
 
+Details on the implementation can be found in the respective subdirectories, for more insights check out the [accompanying paper](https://arxiv.org/abs/2202.04603).
 
 ## 1D Harmonic oscillator
 The following use-cases are available:
@@ -19,7 +20,19 @@ The following use-cases are available:
 Corresponding example code is located in `harmonic_oscillator_1d/`.
 
 ### Required packages
-FermiFCI, PyCall, HDF5, SpecialFunctions, SpecialPolynomials, LinearAlgebra, Roots, Combinatorics, DataFrames, CSV, DelimitedFiles, Logging, LoggingExtras
+- FermiFCI
+- PyCall
+- HDF5
+- SpecialFunctions
+- SpecialPolynomials
+- LinearAlgebra
+- Roots
+- Combinatorics
+- DataFrames
+- CSV
+- DelimitedFiles
+- Logging
+- LoggingExtras
 
 
 ## 1D box potential
@@ -29,4 +42,12 @@ There is one use case for this type of potential:
 Corresponding code is located in `flat_box_1d/`.
 
 ### Required packages
-FermiFCI, LinearAlgebra, DataFrames, CSV, DelimitedFiles, Logging, LoggingExtras, Combinatorics, PyCall
+- FermiFCI
+- LinearAlgebra
+- DataFrames
+- CSV
+- DelimitedFiles
+- Logging
+- LoggingExtras
+- Combinatorics
+- PyCall
